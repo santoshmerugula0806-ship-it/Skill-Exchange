@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,7 +19,8 @@ import { errorHandler, notFound } from "./middleware/error.middleware.js";
 
 const app = express();
 
-app.use(helmet());
+if (env.NODE_ENV === "production") app.set("trust proxy", 1);
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.json());
 app.use(cookieParser());
@@ -43,6 +47,11 @@ app.use("/api/badges", badgeRoutes);
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
+const clientDist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../skillDuel/dist");
+if (env.NODE_ENV === "production" && fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get(/^(?!\/api).*/, (req, res) => res.sendFile(path.join(clientDist, "index.html")));
+}
 app.use(notFound);
 app.use(errorHandler);
 

@@ -1,4 +1,8 @@
-import { io } from "socket.io-client";
+const url =import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? "http://localhost:5000" : undefined);
+socket = io(url, {
+  withCredentials: true,
+  autoConnect: false,
+});
 
 let socket;
 
