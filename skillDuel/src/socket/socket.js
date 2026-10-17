@@ -1,8 +1,4 @@
-const url =import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? "http://localhost:5000" : undefined);
-socket = io(url, {
-  withCredentials: true,
-  autoConnect: false,
-});
+import { io } from "socket.io-client";
 
 let socket;
 
@@ -13,7 +9,10 @@ let socket;
  */
 export const getSocket = () => {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
+    // Dev: local backend. Production (frontend served by the backend): same origin.
+    const url =
+      import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? "http://localhost:5000" : undefined);
+    socket = io(url, {
       withCredentials: true,
       autoConnect: false,
     });
