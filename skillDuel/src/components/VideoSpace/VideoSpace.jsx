@@ -25,13 +25,14 @@ export default function VideoSpace({
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
+
   useEffect(() => {
     if (localVideoRef.current) localVideoRef.current.srcObject = localStream || null;
-  }, [localStream]);
+  }, [localStream, status, cameraOn]);
 
   useEffect(() => {
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream || null;
-  }, [remoteStream]);
+  }, [remoteStream, status]);
 
   return (
     <div
